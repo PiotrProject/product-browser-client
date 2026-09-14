@@ -1,0 +1,73 @@
+<section class="card">
+
+  <h2>Lista produktów</h2>
+
+  <div
+    *ngIf="isLoading"
+    class="loading"
+  >
+
+    <span class="spinner"></span>
+
+    <span>
+      Ładowanie produktów...
+    </span>
+
+  </div>
+
+
+  <table *ngIf="!isLoading">
+
+    <thead>
+
+      <tr>
+        <th>Id</th>
+        <th>Kod</th>
+        <th>Nazwa</th>
+        <th>Cena</th>
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      <tr
+        *ngFor="let product of products"
+      >
+
+        <td>
+          {{ product.id }}
+        </td>
+
+        <td>
+          {{ product.kod }}
+        </td>
+
+        <td>
+          {{ product.nazwa }}
+        </td>
+
+        <td>
+          {{ product.cena | number:'1.2-2' }}
+          zł
+        </td>
+
+      </tr>
+
+
+      <tr *ngIf="products.length === 0">
+
+        <td
+          colspan="4"
+          class="empty"
+        >
+          Brak produktów.
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</section>

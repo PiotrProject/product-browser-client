@@ -1,24 +1,62 @@
 import { TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+
 import { App } from './app';
+import { ProductService } from './services/product.service';
 
 describe('App', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [App],
+
+  const productServiceMock = {
+    getProducts: () => of([]),
+
+    addProduct: () => of({
+      id: 1,
+      kod: 'P001',
+      nazwa: 'Produkt testowy',
+      cena: 100
     })
-      .compileComponents();
+  };
+
+  beforeEach(async () => {
+
+    await TestBed.configureTestingModule({
+      imports: [
+        App
+      ],
+
+      providers: [
+        {
+          provide: ProductService,
+          useValue: productServiceMock
+        }
+      ]
+    }).compileComponents();
+
   });
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+
+    const fixture =
+      TestBed.createComponent(App);
+
+    expect(
+      fixture.componentInstance
+    ).toBeTruthy();
   });
 
-  it('should render title', async () => {
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, product-browser-client');
+  it('should render title', () => {
+
+    const fixture =
+      TestBed.createComponent(App);
+
+    fixture.detectChanges();
+
+    const compiled =
+      fixture.nativeElement as HTMLElement;
+
+    expect(
+      compiled.querySelector('h1')?.textContent
+    ).toContain('Katalog produktów');
   });
+
 });
