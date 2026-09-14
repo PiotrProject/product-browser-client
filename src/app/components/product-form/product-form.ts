@@ -7,6 +7,8 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+
 import { finalize } from 'rxjs';
 
 import {
@@ -58,6 +60,7 @@ export class ProductForm {
       cena: Number(this.newProduct.cena)
     };
 
+    // Walidacja po stronie frontendu
     if (
       !product.kod ||
       !product.nazwa ||
@@ -82,6 +85,7 @@ export class ProductForm {
       )
       .subscribe({
 
+        // 201 Created trafia tutaj jako sukces
         next: createdProduct => {
 
           this.message =
@@ -96,15 +100,42 @@ export class ProductForm {
           this.productAdded.emit(createdProduct);
         },
 
-        error: error => {
+        // Statusy 4xx / 5xx trafiają tutaj
+        error: (error: HttpErrorResponse) => {
 
           console.error(
             'Błąd dodawania produktu:',
             error
           );
 
-          this.message =
-            'Nie udało się dodać produktu.';
+          switch (error.status) {
+
+            case 400:
+              this.message =
+                'Dane produktu są niepoprawne.';
+              break;
+
+            case 409:
+              this.message =
+                error.error?.message ??
+                'Produkt o takim kodzie już istnieje.';
+              break;
+
+            case 500:
+              this.message =
+                'Wystąpił błąd serwera. Spróbuj ponownie później.';
+              break;
+
+            case 0:
+              this.message =
+                'Brak połączenia z serwerem.';
+              break;
+
+            default:
+              this.message =
+                'Wystąpił nieoczekiwany błąd.';
+              break;
+          }
         }
       });
   }
